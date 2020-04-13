@@ -97,5 +97,7 @@ for country in top:
 
 	if color:
 		print("Country: %-20s Infected: %-10s Dead: %-10s Recovered: %-10s Death Rate: %-20s Recovery Rate: %-20s At Risk: %-20s" % (str(name),str(ci),str(cd),str(cr),str(cdp),str(crp),str(csp)))
+		print("")
 	else:
 		print("Country: %-20s Infected: %-10s Dead: %-10s Recovered: %-10s Death Rate: %-9s Recovery Rate: %-9s At Risk: %-9s" % (str(name),str(ci),str(cd),str(cr),str(cdp),str(crp),str(csp)))
+		print("")
