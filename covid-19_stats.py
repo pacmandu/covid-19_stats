@@ -5,6 +5,10 @@ import json
 import pprint
 from termcolor import colored
 import sys
+import datetime
+now = datetime.datetime.now()
+print("Current date and time: " + str(now.strftime("%Y-%m-%d %H:%M:%S")))
+print("")
 
 #https://www.worldometers.info/world-population/population-by-country/
 
