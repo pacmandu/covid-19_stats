@@ -3,6 +3,16 @@ import requests
 from bs4 import BeautifulSoup as bs
 import json
 import pprint
+from termcolor import colored
+import sys
+
+#https://www.worldometers.info/world-population/population-by-country/
+
+color=False
+
+if len(sys.argv) > 1:
+	if sys.argv[1] == "--color":
+		color=True
 
 def percentage(part, whole):
   return round(100 * float(part)/float(whole),4)
@@ -44,11 +54,13 @@ death_rate=percentage(dead,infected)
 global_infection=percentage(infected,worldpop)
 global_death_percent=percentage(dead,worldpop)
 global_recovery=percentage(recovered,infected)
+global_risk=percentage(infected-dead-recovered,infected)
 
 print("Global Infected Death Rate: " + str(death_rate) +"%")
 print("Global Infection Percentage: " + str(global_infection) + "%")
 print("Global Population Death Percentage: " + str(global_death_percent) + "%")
 print("Global Recovery Percentage: " + str(global_recovery) + "%")
+print("Global Infected Still at Risk: " + str(global_risk) + "%")
 print("")
 print("Top " +str(num)+" Infected Countries:")
 for country in top:
@@ -56,6 +68,34 @@ for country in top:
 	ci=country["f"]
 	cd=country["d"]
 	cr=country["r"]
-	print("Country: %-20s Infected: %-10s Dead: %-10s Recovered: %-10s Death Rate: %-9s Recovery Rate: %-9s" % (str(name),str(ci),str(cd),str(cr),str(percentage(cd,ci))+"%",str(percentage(cr,ci))+"%"))
-	#print("Country: " + str(name) + " Infected: " + str(ci) +" Dead: " + str(cd) + " Recovered: " + str(cr) + " Death Rate: " + str(percentage(cd,ci)) +"%")
+	crp=percentage(cr,ci)
+	cdp=percentage(cd,ci)
+	csp=percentage(ci-cd-cr,ci)
 
+	if color:
+		if crp >= global_recovery:
+			crp=colored(str("%.4f"%crp)+"%",'green')
+		else:
+			crp=colored(str("%.4f"%crp)+"%",'yellow')
+
+		if cdp > death_rate:
+			cdp=colored(str("%.4f"%cdp)+"%",'red')
+		else:
+			cdp=colored(str("%.4f"%cdp)+"%",'yellow')
+
+		if csp != 0.0:
+			if csp > global_risk:
+				csp=colored(str("%.4f"%csp)+"%",'red')
+			else:
+				csp=colored(str("%.4f"%csp)+"%",'yellow')
+		else:
+			csp=colored(str("%.4f"%csp)+"%",'green')
+	else:
+		crp=str("%.4f"%crp)+"%"
+		cdp=str("%.4f"%cdp)+"%"
+		csp=str("%.4f"%csp)+"%"
+
+	if color:
+		print("Country: %-20s Infected: %-10s Dead: %-10s Recovered: %-10s Death Rate: %-20s Recovery Rate: %-20s At Risk: %-20s" % (str(name),str(ci),str(cd),str(cr),str(cdp),str(crp),str(csp)))
+	else:
+		print("Country: %-20s Infected: %-10s Dead: %-10s Recovered: %-10s Death Rate: %-9s Recovery Rate: %-9s At Risk: %-9s" % (str(name),str(ci),str(cd),str(cr),str(cdp),str(crp),str(csp)))
